@@ -2,8 +2,10 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# load model
+import sklearn
+
 model = joblib.load("model/churn_best_model.joblib")
+
 
 st.title("Customer Churn Prediction")
 
