@@ -40,7 +40,9 @@ for c in missing_cols:
 
 # predict
 if st.button("Predict"):
+    # preprocess incoming data using pipeline (model is already pipeline)
     prob = model.predict_proba(data)[0][1]
     pred = "Will Churn" if prob>0.5 else "Will NOT Churn"
+
     st.subheader(f"Prediction: {pred}")
-    st.text(f"Probability: {prob*100:.2f}%")
+    st.text(f"Churn Probability: {prob*100:.2f}%")
