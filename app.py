@@ -1,10 +1,9 @@
 import streamlit as st
 import pandas as pd
-import kagglehub
 
-# Download dataset
-path = kagglehub.dataset_download("blastchar/telco-customer-churn")
-df = pd.read_csv(path + "/WA_Fn-UseC_-Telco-Customer-Churn.csv")
+# Load dataset directly from GitHub
+url = "https://raw.githubusercontent.com/blastchar/telco-customer-churn/master/WA_Fn-UseC_-Telco-Customer-Churn.csv"
+df = pd.read_csv(url)
 
 # clean
 df["TotalCharges"] = pd.to_numeric(df["TotalCharges"], errors="coerce")
@@ -39,23 +38,31 @@ model = Pipeline([
 
 model.fit(X_train, y_train)
 
-st.title("Customer Churn Prediction")
+st.title("Customer Churn Prediction App")
 
-# UI
-data = {}
-data["gender"] = st.selectbox("Gender",["Male","Female"])
-data["SeniorCitizen"] = st.selectbox("SeniorCitizen",[0,1])
-data["Partner"] = st.selectbox("Partner",["Yes","No"])
-data["Dependents"] = st.selectbox("Dependents",["Yes","No"])
-data["tenure"] = st.number_input("Tenure (months)",0,100,12)
-data["InternetService"] = st.selectbox("InternetService",["DSL","Fiber optic","No"])
-data["Contract"] = st.selectbox("Contract",["Month-to-month","One year","Two year"])
-data["MonthlyCharges"] = st.number_input("MonthlyCharges",0.0,500.0,50.0)
-data["TotalCharges"] = st.number_input("TotalCharges",0.0,10000.0,500.0)
+gender = st.selectbox("Gender",["Male","Female"])
+senior = st.selectbox("SeniorCitizen",[0,1])
+partner = st.selectbox("Partner",["Yes","No"])
+dependents = st.selectbox("Dependents",["Yes","No"])
+tenure = st.number_input("Tenure",0,100,12)
+internet = st.selectbox("InternetService",["DSL","Fiber optic","No"])
+contract = st.selectbox("Contract",["Month-to-month","One year","Two year"])
+monthly = st.number_input("MonthlyCharges",0.0,500.0,50.0)
+total = st.number_input("TotalCharges",0.0,10000.0,500.0)
 
-df_input = pd.DataFrame([data])
+input_data = pd.DataFrame([{
+    "gender":gender,
+    "SeniorCitizen":senior,
+    "Partner":partner,
+    "Dependents":dependents,
+    "tenure":tenure,
+    "InternetService":internet,
+    "Contract":contract,
+    "MonthlyCharges":monthly,
+    "TotalCharges":total
+}])
 
 if st.button("Predict"):
-    prob = model.predict_proba(df_input)[0][1]
-    st.write("Churn Probability:", round(prob*100,2),"%")
-    st.write("Result:", "Will Churn" if prob>0.5 else "Will NOT Churn")
+    prob = model.predict_proba(input_data)[0][1]
+    st.write("Churn Probability:", f"{prob*100:.2f}%")
+    st.write("Prediction:", "Will Churn" if prob>0.5 else "Will NOT Churn")
