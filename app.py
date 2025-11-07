@@ -33,10 +33,6 @@ data = pd.DataFrame({
     "TotalCharges":[total]
 })
 
-# fill missing columns if necessary
-missing_cols = set(model.named_steps['pre'].feature_names_in_) - set(data.columns)
-for c in missing_cols:
-    data[c] = "No"
 
 # predict
 if st.button("Predict"):
